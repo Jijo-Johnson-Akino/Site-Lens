@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Layout shift</title>
+</head>
+<body>
+  <h1>Stable?</h1>
+  <script>
+    setTimeout(function () {
+      var banner = document.createElement("div");
+      banner.style.height = "220px";
+      banner.style.background = "#ddd";
+      banner.textContent = "Injected banner";
+      document.body.insertBefore(banner, document.body.firstChild);
+    }, 40);
+  </script>
+</body>
+</html>

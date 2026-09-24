@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>How SiteBench measures content</title>
+  <meta name="description" content="A long-form explanation of measurable content signals used by SiteBench.">
+  <link rel="canonical" href="https://example.com/blog/content-analysis">
+  <script type="application/ld+json">{"@type": "Article", "headline": "How SiteBench measures content", "author": {"@type": "Person", "name": "Jordan Blake"}, "datePublished": "2024-04-12"}</script>
+</head>
+<body>
+  <header><nav><a href="/">Home</a><a href="/blog">Blog</a></nav></header>
+  <main>
+    <article>
+      <h1>How SiteBench measures content</h1>
+      <p class="byline">By Jordan Blake</p><time datetime="2024-04-12">2024-04-12</time>
+      <h2>What the analyzer measures</h2>
+      <p>Visible word count is measured from extracted text after scripts and styles are removed.</p>
+<p>Headings organize the remaining paragraphs into sections that a reader can scan.</p>
+<p>SiteBench records paragraph counts without claiming the writing is universally good.</p>
+<p>A publication date is stored only when the markup actually contains one.</p>
+<p>Author names are collected from bylines, rel=author links, or Person structured data.</p>
+<p>Readability formulas estimate grade level for English sentences using syllable counts.</p>
+<p>Boilerplate estimates compare navigation and footer text with primary copy.</p>
+<p>Repeated blocks are found by normalizing whitespace and comparing paragraph fingerprints.</p>
+<p>Internal links inside the main region are counted separately from header menus.</p>
+<p>Calls to action are detected from button and link labels such as contact us.</p>
+<p>Thin content warnings use configurable thresholds rather than a single magic number.</p>
+<p>Contact pages are not penalized for missing article authors or dates.</p>
+<p>Product pages may include features, descriptions, and a purchase or inquiry action.</p>
+<p>Language detection starts with the html lang attribute declared on the document.</p>
+<p>Unsupported languages skip English Flesch calculations instead of inventing a score.</p>
+<p>Duplicate analysis compares extra crawled pages when the scan already collected them.</p>
+<p>This module does not fetch the public internet to look for plagiarism.</p>
+<p>Completeness checks look for observable elements that match the classified page type.</p>
+<p>Lists and tables are reported as structure signals and are never required on every page.</p>
+<p>Long paragraphs can make scanning harder, but length alone is not an automatic failure.</p>
+<p>Visible word count is measured from extracted text after scripts and styles are removed. Additional detail 1 explains the same idea with new wording.</p>
+<p>Headings organize the remaining paragraphs into sections that a reader can scan. Additional detail 1 explains the same idea with new wording.</p>
+<p>SiteBench records paragraph counts without claiming the writing is universally good. Additional detail 1 explains the same idea with new wording.</p>
+<p>A publication date is stored only when the markup actually contains one. Additional detail 1 explains the same idea with new wording.</p>
+      <h2>How findings are reported</h2>
+      <p>Findings describe measured structure, depth, and repetition rather than editorial taste.</p>
+      <p>Related reading is available in the <a href="/blog/readability">readability notes</a> and the <a href="/blog/headings">heading guide</a>.</p>
+      
+    </article>
+  </main>
+  <footer><p>Copyright example.com</p></footer>
+</body>
+</html>

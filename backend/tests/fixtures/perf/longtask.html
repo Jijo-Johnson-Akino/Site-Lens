@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Long task</title>
+</head>
+<body>
+  <h1>Busy</h1>
+  <script>
+    var start = performance.now();
+    while (performance.now() - start < 90) {}
+  </script>
+</body>
+</html>

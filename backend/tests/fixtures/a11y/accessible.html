@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Accessible demo</title>
+  <style>
+    body { margin: 0; font: 16px/1.5 sans-serif; color: #111; background: #fff; }
+    a.skip { position: absolute; left: 8px; top: 8px; }
+    main { padding: 24px; }
+    label { display: block; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header>
+    <nav aria-label="Primary">
+      <a href="/">Home</a>
+      <a href="/about">About</a>
+    </nav>
+  </header>
+  <main id="main">
+    <h1>Welcome</h1>
+    <p>This page is structured for an automated accessibility audit.</p>
+    <img width="40" height="40" alt="Company mark" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+    <img width="1" height="1" alt="" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+    <form action="/signup" method="post">
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email">
+      <button type="submit">Request access</button>
+    </form>
+    <button aria-label="Close">×</button>
+  </main>
+  <footer>Footer</footer>
+</body>
+</html>

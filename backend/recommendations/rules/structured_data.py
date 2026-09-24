@@ -1,0 +1,77 @@
+from backend.recommendations.registry import rule
+
+RULES = [
+    rule(
+        "structured_data.fix_invalid_jsonld",
+        "Structured Data",
+        "Fix invalid JSON-LD",
+        "Correct JSON-LD blocks that could not be parsed as JSON.",
+        "Invalid JSON-LD cannot be interpreted as structured data. Other valid blocks on the same page are still analyzed separately.",
+        (
+            "Open the invalid JSON-LD script blocks listed in the evidence.",
+            "Fix JSON syntax errors such as trailing commas or unquoted keys.",
+            "Validate that the block parses as JSON before adding or completing properties.",
+        ),
+        ("structured_data.invalid_jsonld",),
+        effort="small",
+        impact="high",
+    ),
+    rule(
+        "structured_data.resolve_entity_conflicts",
+        "Structured Data",
+        "Resolve conflicting entity values",
+        "Review structured entities that share an identity but expose conflicting property values.",
+        "Conflicting values for the same entity make machine interpretation ambiguous. SiteLens does not determine which value is correct.",
+        (
+            "Compare the conflicting properties on the listed entities.",
+            "Keep a single authoritative value for each shared field, or use distinct @id values if they are different entities.",
+            "Do not delete valid alternate entities that represent different things.",
+        ),
+        ("structured_data.conflicting_entity", "structured_data.id.001"),
+        effort="medium",
+        impact="medium",
+    ),
+    rule(
+        "structured_data.complete_schema_properties",
+        "Structured Data",
+        "Complete missing schema properties",
+        "Add commonly expected properties on typed entities that are missing them.",
+        "These are SiteLens core-property checks, not a claim that the markup is invalid Schema.org or ineligible for search features.",
+        (
+            "Fix invalid JSON-LD first if parse errors are also present.",
+            "Add the missing core properties reported for each entity type, such as Organization name or Product name.",
+            "Keep schema values consistent with visible page content.",
+        ),
+        (
+            "structured_data.core.001",
+            "structured_data.org.001",
+            "structured_data.article.001",
+            "structured_data.product.001",
+            "structured_data.offer.001",
+        ),
+        effort="medium",
+        impact="medium",
+        depends_on=("structured_data.fix_invalid_jsonld",),
+    ),
+    rule(
+        "structured_data.align_visible_and_schema_data",
+        "Structured Data",
+        "Align visible content with structured data",
+        "Reconcile schema name, author, date, or price values that differ from visible page text.",
+        "Names and prices are compared with normalized text, not editorial judgment. A mismatch is not a claim of false advertising.",
+        (
+            "Compare the schema values with the visible title, byline, date, or price.",
+            "Update whichever source is incorrect so they match.",
+            "No currency conversion is attempted for price comparisons.",
+        ),
+        (
+            "structured_data.consist.001",
+            "structured_data.consist.002",
+            "structured_data.consist.003",
+            "structured_data.consist.004",
+        ),
+        effort="medium",
+        impact="medium",
+        depends_on=("structured_data.fix_invalid_jsonld",),
+    ),
+]

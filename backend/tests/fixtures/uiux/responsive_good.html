@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Responsive good</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font: 16px/1.5 sans-serif; max-width: 100%; overflow-x: hidden; }
+    header, nav, main { max-width: 100%; padding: 12px; }
+    nav a { margin-right: 12px; }
+    img { max-width: 100%; height: auto; }
+    .cta { display: inline-block; padding: 12px 20px; background: #0f766e; color: #fff; text-decoration: none; }
+    label { display: block; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <header>
+    <a class="logo" href="/">
+      <img alt="Brand" width="40" height="40" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+      Brand
+    </a>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/about">About</a>
+      <a href="/pricing">Pricing</a>
+      <a href="/contact">Contact</a>
+    </nav>
+  </header>
+  <main>
+    <h1>Welcome</h1>
+    <p>Main content stays inside the viewport on desktop, tablet, and mobile widths.</p>
+    <a class="cta" href="/start">Get Started</a>
+    <form action="/signup" method="post">
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email">
+      <button type="submit">Request access</button>
+    </form>
+  </main>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mobile menu</title>
+  <style>
+    body { margin: 0; font: 16px sans-serif; }
+    button { min-width: 44px; min-height: 44px; }
+    nav { display: none; padding: 12px; }
+    nav.open { display: block; }
+    nav a { display: block; padding: 12px; }
+  </style>
+</head>
+<body>
+  <header>
+    <button id="menu" type="button" aria-label="Menu" aria-expanded="false">Menu</button>
+    <nav id="drawer">
+      <a href="/">Home</a>
+      <a href="/about">About</a>
+      <a href="/pricing">Pricing</a>
+    </nav>
+  </header>
+  <main>
+    <h1>Menu demo</h1>
+    <p>Tap Menu to open navigation.</p>
+  </main>
+  <script>
+    document.getElementById("menu").addEventListener("click", function () {
+      var drawer = document.getElementById("drawer");
+      var open = !drawer.classList.contains("open");
+      drawer.classList.toggle("open", open);
+      this.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Focus trap</title>
+</head>
+<body>
+  <main>
+    <h1>Trap</h1>
+    <button id="trap">Stay here</button>
+    <a href="/next">Next page</a>
+  </main>
+  <script>
+    document.getElementById("trap").focus();
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Tab") {
+        event.preventDefault();
+        document.getElementById("trap").focus();
+      }
+    });
+  </script>
+</body>
+</html>
