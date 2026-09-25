@@ -1,25 +1,25 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import { isThemePreference, nextTheme, resolveTheme } from "./theme";
+import { isThemePreference, nextTheme, normalizeTheme, resolveTheme } from "./theme";
 
 describe("theme helpers", () => {
-  it("accepts stored preferences", () => {
+  it("treats light as system and only stores system or dark", () => {
     assert.equal(isThemePreference("system"), true);
-    assert.equal(isThemePreference("light"), true);
     assert.equal(isThemePreference("dark"), true);
-    assert.equal(isThemePreference("auto"), false);
-    assert.equal(isThemePreference(null), false);
+    assert.equal(isThemePreference("light"), false);
+    assert.equal(normalizeTheme("light"), "system");
+    assert.equal(normalizeTheme("system"), "system");
+    assert.equal(normalizeTheme("dark"), "dark");
+    assert.equal(normalizeTheme(null), "system");
   });
 
-  it("cycles system → light → dark → system", () => {
-    assert.equal(nextTheme("system"), "light");
-    assert.equal(nextTheme("light"), "dark");
+  it("cycles light/system ↔ dark", () => {
+    assert.equal(nextTheme("system"), "dark");
     assert.equal(nextTheme("dark"), "system");
   });
 
-  it("resolves explicit light and dark without the OS setting", () => {
-    assert.equal(resolveTheme("light"), "light");
+  it("resolves dark without the OS setting", () => {
     assert.equal(resolveTheme("dark"), "dark");
   });
 });

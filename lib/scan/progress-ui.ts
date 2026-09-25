@@ -110,22 +110,39 @@ export function clampProgress(value: number | null | undefined): number {
   return Math.min(100, Math.max(0, Math.round(value)));
 }
 
-export function progressFromSteps(steps: Array<{ status: ScanStepStatus }>): number {
-  if (steps.length === 0) {
+export function percentFromStep(currentStep: number, totalSteps: number): number {
+  if (!Number.isFinite(currentStep) || !Number.isFinite(totalSteps) || totalSteps <= 0) {
     return 0;
   }
-  const completed = steps.filter((step) => step.status === "completed").length;
-  return Math.round((completed / steps.length) * 100);
+  const current = Math.min(totalSteps, Math.max(0, currentStep));
+  return Math.round((current / totalSteps) * 100);
 }
 
-export function displayProgress(
-  apiProgress: number | null | undefined,
-  steps: Array<{ status: ScanStepStatus }>,
-): number {
-  if (typeof apiProgress === "number" && Number.isFinite(apiProgress)) {
-    return clampProgress(apiProgress);
+export function scanProgressFromSteps(
+  steps: Array<ScanStepDefinition & { status: ScanStepStatus }>,
+  fraction?: number,
+): { currentStep: number; totalSteps: number; percent: number } {
+  const { current, total } = currentStepNumber(steps);
+  if (total <= 0) {
+    return { currentStep: 0, totalSteps: 0, percent: 0 };
   }
-  return progressFromSteps(steps);
+  const percent =
+    typeof fraction === "number" && Number.isFinite(fraction)
+      ? Math.round(((current - 1 + Math.min(1, Math.max(0, fraction))) / total) * 100)
+      : percentFromStep(current, total);
+  return {
+    currentStep: current,
+    totalSteps: total,
+    percent: clampProgress(percent),
+  };
+}
+
+/** Weighted API `progress` is ignored — circle and step text share this value. */
+export function displayProgress(
+  _apiProgress: number | null | undefined,
+  steps: Array<ScanStepDefinition & { status: ScanStepStatus }>,
+): number {
+  return scanProgressFromSteps(steps).percent;
 }
 
 export function activityHeadline(activity: string | null | undefined): string {

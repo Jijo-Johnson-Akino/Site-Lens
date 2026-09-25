@@ -1760,6 +1760,45 @@ export async function getScanReport(scanId: string): Promise<ScanReportResponse>
   return (await response.json()) as ScanReportResponse;
 }
 
+export async function downloadScanReportPdf(scanId: string, filenameHint?: string): Promise<void> {
+  let response: Response;
+  try {
+    response = await fetch(`/api/scans/${encodeURIComponent(scanId)}/report.pdf`, { cache: "no-store" });
+  } catch {
+    throw new ScanApiError("ENGINE_UNAVAILABLE", "Unable to reach the scan engine. Try again in a moment.");
+  }
+  if (!response.ok) {
+    throw await readError(response);
+  }
+  const blob = await response.blob();
+  const filename = filenameFromDisposition(response.headers.get("Content-Disposition")) || filenameHint || "SiteLens-report.pdf";
+  const objectUrl = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = objectUrl;
+  link.download = filename;
+  link.rel = "noopener";
+  document.body.append(link);
+  link.click();
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+}
+
+function filenameFromDisposition(header: string | null): string | null {
+  if (!header) {
+    return null;
+  }
+  const utf = /filename\*=(?:UTF-8'')?([^;]+)/i.exec(header);
+  if (utf?.[1]) {
+    try {
+      return decodeURIComponent(utf[1].trim().replace(/^"+|"+$/g, ""));
+    } catch {
+      return utf[1].trim().replace(/^"+|"+$/g, "");
+    }
+  }
+  const ascii = /filename="?([^";]+)"?/i.exec(header);
+  return ascii?.[1]?.trim() ?? null;
+}
+
 export type IssueQuery = {
   status?: string;
   severity?: string;

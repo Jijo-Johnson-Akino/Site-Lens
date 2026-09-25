@@ -141,12 +141,12 @@ export function ScanShell({
 
   return (
     <div className="flex min-h-full min-w-0 flex-1 flex-col bg-background lg:flex-row">
-      <aside className="flex shrink-0 flex-col border-b border-sidebar-border bg-navy text-navy-foreground print:hidden lg:sticky lg:top-0 lg:h-svh lg:w-56 lg:border-r lg:border-b-0">
+      <aside className="flex shrink-0 flex-col border-b border-border bg-card text-foreground print:hidden lg:sticky lg:top-0 lg:h-svh lg:w-56 lg:border-r lg:border-b-0">
         <div className="flex h-16 items-center justify-between gap-2 px-4">
-          <Logo href="/" inverted />
+          <Logo href="/" />
           <button
             type="button"
-            className="inline-flex size-9 items-center justify-center rounded-lg text-navy-foreground hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:outline-none lg:hidden"
+            className="inline-flex size-9 items-center justify-center rounded-lg text-foreground hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none lg:hidden"
             aria-expanded={menuOpen}
             aria-controls="scan-nav"
             onClick={() => setMenuOpen((open) => !open)}
@@ -172,7 +172,7 @@ export function ScanShell({
                 {dropdown ? (
                   <button
                     type="button"
-                    className="flex w-full items-center justify-between gap-2 rounded-md px-3 py-1 text-[10px] font-medium tracking-[0.16em] text-navy-foreground/45 uppercase hover:bg-white/5 hover:text-navy-foreground/70 focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:outline-none"
+                    className="flex w-full items-center justify-between gap-2 rounded-md px-3 py-1 text-[10px] font-medium tracking-[0.16em] text-muted-foreground uppercase hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
                     aria-expanded={expanded}
                     aria-controls={panelId}
                     onClick={() => setOpenGroups((prev) => ({ ...prev, [group.id]: !prev[group.id] }))}
@@ -184,7 +184,7 @@ export function ScanShell({
                     />
                   </button>
                 ) : (
-                  <p className="px-3 pb-1 text-[10px] font-medium tracking-[0.16em] text-navy-foreground/45 uppercase">
+                  <p className="px-3 pb-1 text-[10px] font-medium tracking-[0.16em] text-muted-foreground uppercase">
                     {group.label}
                   </p>
                 )}
@@ -210,19 +210,19 @@ export function ScanShell({
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-16 items-center justify-between gap-3 border-b border-white/10 bg-navy px-5 text-navy-foreground print:hidden sm:px-8">
+        <header className="flex h-16 items-center justify-between gap-3 border-b border-border bg-card px-5 text-foreground print:hidden sm:px-8">
           <div className="min-w-0">
-            <p className="text-sm font-medium text-navy-foreground">{PAGE_TITLES[current]}</p>
+            <p className="text-sm font-medium text-foreground">{PAGE_TITLES[current]}</p>
             {host ? (
-              <p className="truncate text-xs text-navy-foreground/60" title={fullUrl}>
+              <p className="truncate text-xs text-muted-foreground" title={fullUrl}>
                 {host}
                 {scan?.status ? ` · ${scanStatusLabel(scan.status)}` : ""}
               </p>
             ) : (
-              <p className="text-xs text-navy-foreground/60">Loading website…</p>
+              <p className="text-xs text-muted-foreground">Loading website…</p>
             )}
           </div>
-          <ThemeToggle className="border-white/15 bg-white/10 text-navy-foreground hover:bg-white/15" />
+          <ThemeToggle />
         </header>
         <main className="min-w-0 flex-1 overflow-x-hidden px-6 py-6">{children}</main>
       </div>
@@ -251,13 +251,13 @@ function ShellLink({
       className={cn(
         "flex items-center justify-between gap-2 rounded-lg px-3 py-2 text-sm transition-colors",
         active
-          ? "bg-white/10 font-semibold text-navy-foreground"
-          : "font-normal text-navy-foreground/70 hover:bg-white/5 hover:text-navy-foreground",
+          ? "bg-brand/10 font-semibold text-brand"
+          : "font-normal text-muted-foreground hover:bg-muted hover:text-foreground",
       )}
     >
       <span>{children}</span>
       {typeof badge === "number" ? (
-        <span className="rounded-md bg-white/10 px-1.5 py-0.5 text-[10px] font-medium tabular-nums text-navy-foreground/80">
+        <span className="rounded-md bg-muted px-1.5 py-0.5 text-[10px] font-medium tabular-nums text-muted-foreground">
           {badge}
         </span>
       ) : null}

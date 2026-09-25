@@ -517,3 +517,23 @@ def test_methodology_generation_and_version() -> None:
     assert "SiteLens analyzes publicly accessible website content and behavior." in report["methodology"]["paragraphs"]
     assert report["methodology"]["score"]["calculation_version"] == "1.0"
     assert "renormal" in report["methodology"]["score"]["unavailable_behavior"].lower()
+
+
+def test_report_pdf_is_an_attachment(client: TestClient) -> None:
+    result = _complete_result()
+    _insert(client, "scan_report_complete", result)
+    response = client.get("/api/scans/scan_report_complete/report.pdf")
+    assert response.status_code == 200
+    assert response.headers["content-type"].startswith("application/pdf")
+    disposition = response.headers.get("content-disposition", "")
+    assert "attachment" in disposition
+    assert "SiteLens-example.com-report.pdf" in disposition
+    assert response.content.startswith(b"%PDF")
+    assert b"%%EOF" in response.content
+
+
+def test_report_pdf_not_ready(client: TestClient) -> None:
+    _insert(client, "scan_report_running", None, status="running")
+    response = client.get("/api/scans/scan_report_running/report.pdf")
+    assert response.status_code == 409
+    assert response.json()["error"]["code"] == "SCAN_NOT_READY"

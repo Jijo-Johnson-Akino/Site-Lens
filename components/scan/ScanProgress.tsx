@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 import { ScanCompletion } from "@/components/scan/ScanCompletion";
 import { ScanFailure } from "@/components/scan/ScanFailure";
@@ -15,11 +15,7 @@ import { ScanProgressHero } from "@/components/scan/ScanProgressHero";
 import { ScanScope } from "@/components/scan/ScanScope";
 import { ScanStepList } from "@/components/scan/ScanStepList";
 import { createScan } from "@/lib/scan/api";
-import {
-  currentStepNumber,
-  displayProgress,
-  lifecycleForSteps,
-} from "@/lib/scan/progress-ui";
+import { lifecycleForSteps, scanProgressFromSteps } from "@/lib/scan/progress-ui";
 import { statusesForScan } from "@/lib/scan/steps";
 import { useScanStatus } from "@/lib/scan/use-scan-status";
 
@@ -44,13 +40,31 @@ export function ScanProgress({ scanId }: { scanId: string }) {
   const failureMessage = scan?.error?.message ?? error ?? "Unable to analyze this website.";
   const href = scan?.normalized_url || scan?.url;
   const steps = statusesForScan({
-    progress: typeof scan?.progress === "number" ? scan.progress : 0,
+    progress: 0,
     currentStep,
     status: failed && !scan ? "failed" : status,
   });
-  const percent = displayProgress(scan?.progress, steps);
+  const shown = scanProgressFromSteps(steps);
   const stages = lifecycleForSteps(steps);
-  const { current: stepNumber, total: stepTotal } = currentStepNumber(steps);
+  useEffect(() => {
+    if (status !== "queued" && status !== "running") {
+      return;
+    }
+    console.log("[scan-progress]", {
+      apiProgress: scan?.progress,
+      apiCurrentStep: scan?.current_step,
+      currentStep: shown.currentStep,
+      totalSteps: shown.totalSteps,
+      percent: shown.percent,
+    });
+  }, [
+    status,
+    scan?.progress,
+    scan?.current_step,
+    shown.currentStep,
+    shown.totalSteps,
+    shown.percent,
+  ]);
 
   async function retry() {
     const url = scan?.url;
@@ -120,11 +134,10 @@ export function ScanProgress({ scanId }: { scanId: string }) {
         </div>
         <div className="scan-area-hero min-w-0">
           <ScanProgressHero
-            progress={percent}
             url={href}
             currentStep={currentStep}
-            stepNumber={stepNumber}
-            stepTotal={stepTotal}
+            stepNumber={shown.currentStep}
+            stepTotal={shown.totalSteps}
           />
         </div>
         <div className="scan-area-steps min-w-0">

@@ -6,7 +6,7 @@ import { Download, ScanLine } from "lucide-react";
 
 import { ScanBreadcrumbs } from "@/components/scan/ScanBreadcrumbs";
 import { buttonVariants } from "@/components/ui/button";
-import { createScan, ScanApiError, type ScanReportResponse } from "@/lib/scan/api";
+import { createScan, downloadScanReportPdf, ScanApiError, type ScanReportResponse } from "@/lib/scan/api";
 import { hostnameOf } from "@/lib/scan/display";
 import { analyzedViewport, formatReportDate, headerStatusLabel, previewScreenshot } from "@/lib/scan/report-ui";
 import { cn } from "@/lib/utils";
@@ -58,14 +58,42 @@ export function ReportHeader({ report }: { report: ScanReportResponse }) {
           </div>
         </div>
         <div className="flex shrink-0 flex-wrap items-start gap-2 print:hidden">
-          <button type="button" className={cn(buttonVariants({ variant: "outline", size: "sm" }), "h-8 px-3")} onClick={() => window.print()}>
-            <Download className="size-3.5" aria-hidden="true" />
-            Download PDF
-          </button>
+          <DownloadPdfButton report={report} />
           <NewScanButton url={report.scan.url || report.scan.website} />
         </div>
       </div>
     </header>
+  );
+}
+
+function DownloadPdfButton({ report }: { report: ScanReportResponse }) {
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const host = hostnameOf(report.scan.website || report.scan.url) || "website";
+
+  return (
+    <span className="inline-flex flex-col items-start gap-1">
+      <button
+        type="button"
+        disabled={pending}
+        className={cn(buttonVariants({ variant: "outline", size: "sm" }), "h-8 px-3")}
+        onClick={async () => {
+          setPending(true);
+          setError(null);
+          try {
+            await downloadScanReportPdf(report.scan.scan_id, `SiteLens-${host}-report.pdf`);
+          } catch (caught) {
+            setError(caught instanceof ScanApiError ? caught.message : "Unable to download the PDF.");
+          } finally {
+            setPending(false);
+          }
+        }}
+      >
+        <Download className="size-3.5" aria-hidden="true" />
+        {pending ? "Downloading…" : "Download PDF"}
+      </button>
+      {error ? <span className="text-[11px] text-critical">{error}</span> : null}
+    </span>
   );
 }
 

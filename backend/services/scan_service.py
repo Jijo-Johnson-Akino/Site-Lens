@@ -45,29 +45,44 @@ from backend.store.screenshots import InMemoryScreenshotStore, ScreenshotReposit
 
 logger = logging.getLogger("sitebench.scan")
 
-STEPS = [
-    (0, "Validating website"),
-    (15, "Connecting"),
-    (30, "Fetching homepage"),
-    (40, "Parsing website"),
-    (45, "Discovering pages"),
-    (50, "SEO analysis"),
-    (65, "AEO analysis"),
-    (75, "Rendering website"),
-    (82, "UI/UX analysis"),
-    (88, "Capturing screenshots"),
-    (92, "Accessibility analysis"),
-    (96, "Performance analysis"),
-    (97, "Content analysis"),
-    (98, "Structured Data Analysis"),
-    (99, "Mobile Analysis"),
-    (99, "CRO Analysis"),
-    (99, "Trust & Credibility Analysis"),
-    (99, "Aggregating Issues"),
-    (99, "Generating Recommendations"),
-    (99, "Calculating Health Score"),
-    (100, "Analysis complete"),
+STEP_NAMES = [
+    "Validating website",
+    "Connecting",
+    "Fetching homepage",
+    "Parsing website",
+    "Discovering pages",
+    "SEO analysis",
+    "AEO analysis",
+    "Rendering website",
+    "UI/UX analysis",
+    "Capturing screenshots",
+    "Accessibility analysis",
+    "Performance analysis",
+    "Content analysis",
+    "Structured Data Analysis",
+    "Mobile Analysis",
+    "CRO Analysis",
+    "Trust & Credibility Analysis",
+    "Aggregating Issues",
+    "Generating Recommendations",
+    "Calculating Health Score",
+    "Analysis complete",
 ]
+
+
+def progress_for_step(step: str) -> int:
+    """Same formula as the scan UI: round((currentStep / totalSteps) * 100)."""
+    try:
+        index = STEP_NAMES.index(step)
+    except ValueError:
+        return 0
+    total = len(STEP_NAMES)
+    if total <= 0:
+        return 0
+    return round(((index + 1) / total) * 100)
+
+
+STEPS = [(progress_for_step(name), name) for name in STEP_NAMES]
 
 
 def _now() -> datetime:
@@ -136,13 +151,14 @@ class ScanService:
                 "SCAN_LIMIT",
                 "SiteLens is already running the maximum number of scans. Try again shortly.",
             )
+        first_step = STEP_NAMES[0]
         record = ScanRecord(
             id=_new_id(),
             url=raw_url.strip(),
             normalized_url=normalized,
             status="queued",
-            progress=0,
-            current_step=STEPS[0][1],
+            progress=progress_for_step(first_step),
+            current_step=first_step,
             created_at=_now(),
         )
         saved = self._store.create(record)
@@ -207,6 +223,20 @@ class ScanService:
             self._persist_issues(scan_id, payload)
 
     def _update(self, record: ScanRecord, **changes) -> ScanRecord:
+        if "current_step" in changes:
+            step = str(changes.get("current_step") or "")
+            discarded = changes.get("progress")
+            derived = progress_for_step(step)
+            changes["progress"] = derived
+            logger.info(
+                "scan_progress scan_id=%s current_step=%s index=%s/%s percent=%s discarded_weighted=%s",
+                record.id,
+                step,
+                STEP_NAMES.index(step) + 1 if step in STEP_NAMES else None,
+                len(STEP_NAMES),
+                derived,
+                discarded,
+            )
         updated = record.model_copy(update=changes)
         return self._store.save(updated)
 

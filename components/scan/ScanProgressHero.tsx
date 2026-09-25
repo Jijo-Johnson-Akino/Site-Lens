@@ -1,22 +1,20 @@
 import { Clock } from "lucide-react";
 
-import { activityDetail, activityHeadline } from "@/lib/scan/progress-ui";
+import { activityDetail, activityHeadline, percentFromStep } from "@/lib/scan/progress-ui";
 import { cn } from "@/lib/utils";
 
 export function ScanProgressHero({
-  progress,
   url,
   currentStep,
   stepNumber,
   stepTotal,
 }: {
-  progress: number;
   url?: string;
   currentStep: string;
   stepNumber: number;
   stepTotal: number;
 }) {
-  const pct = Math.min(100, Math.max(0, progress));
+  const pct = percentFromStep(stepNumber, stepTotal);
   const headline = activityHeadline(currentStep);
   const detail = activityDetail(currentStep);
 

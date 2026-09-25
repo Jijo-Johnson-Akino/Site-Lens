@@ -1,20 +1,25 @@
 export const THEME_STORAGE_KEY = "sitebench-theme";
 export const THEME_CHANGE_EVENT = "sitebench-theme-change";
 
-export type ThemePreference = "light" | "dark" | "system";
+export type ThemePreference = "system" | "dark";
 export type ResolvedTheme = "light" | "dark";
 
-export const THEME_OPTIONS: ThemePreference[] = ["system", "light", "dark"];
+export const THEME_OPTIONS: ThemePreference[] = ["system", "dark"];
 
 export function isThemePreference(value: string | null | undefined): value is ThemePreference {
-  return value === "light" || value === "dark" || value === "system";
+  return value === "dark" || value === "system";
+}
+
+/** Light in storage/UI means follow the OS. Dark is always dark. */
+export function normalizeTheme(value: string | null | undefined): ThemePreference {
+  if (value === "dark") return "dark";
+  return "system";
 }
 
 export function readStoredTheme(): ThemePreference {
   if (typeof window === "undefined") return "system";
   try {
-    const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
-    return isThemePreference(stored) ? stored : "system";
+    return normalizeTheme(window.localStorage.getItem(THEME_STORAGE_KEY));
   } catch {
     return "system";
   }
@@ -25,10 +30,8 @@ export function systemPrefersDark() {
 }
 
 export function resolveTheme(preference: ThemePreference): ResolvedTheme {
-  if (preference === "system") {
-    return systemPrefersDark() ? "dark" : "light";
-  }
-  return preference;
+  if (preference === "dark") return "dark";
+  return systemPrefersDark() ? "dark" : "light";
 }
 
 export function applyTheme(preference: ThemePreference) {
@@ -67,6 +70,5 @@ export function subscribeTheme(onStoreChange: () => void) {
 }
 
 export function nextTheme(current: ThemePreference): ThemePreference {
-  const index = THEME_OPTIONS.indexOf(current);
-  return THEME_OPTIONS[(index + 1) % THEME_OPTIONS.length];
+  return current === "dark" ? "system" : "dark";
 }

@@ -7,29 +7,36 @@ export type ScanStepDefinition = {
   activity: string;
 };
 
-export const SCAN_STEPS: ScanStepDefinition[] = [
-  { id: "validate", label: "Validating website", progress: 0, activity: "Validating website" },
-  { id: "connect", label: "Connecting", progress: 15, activity: "Connecting" },
-  { id: "fetch", label: "Fetching homepage", progress: 30, activity: "Fetching homepage" },
-  { id: "parse", label: "Parsing website", progress: 40, activity: "Parsing website" },
-  { id: "pages", label: "Discovering pages", progress: 45, activity: "Discovering pages" },
-  { id: "seo", label: "SEO analysis", progress: 50, activity: "SEO analysis" },
-  { id: "aeo", label: "AEO analysis", progress: 65, activity: "AEO analysis" },
-  { id: "render", label: "Rendering website", progress: 75, activity: "Rendering website" },
-  { id: "uiux", label: "UI/UX analysis", progress: 82, activity: "UI/UX analysis" },
-  { id: "shots", label: "Capturing screenshots", progress: 88, activity: "Capturing screenshots" },
-  { id: "a11y", label: "Accessibility analysis", progress: 92, activity: "Accessibility analysis" },
-  { id: "perf", label: "Performance analysis", progress: 96, activity: "Performance analysis" },
-  { id: "content", label: "Content analysis", progress: 97, activity: "Content analysis" },
-  { id: "schema", label: "Structured Data Analysis", progress: 98, activity: "Structured Data Analysis" },
-  { id: "mobile", label: "Mobile Analysis", progress: 99, activity: "Mobile Analysis" },
-  { id: "cro", label: "CRO Analysis", progress: 99, activity: "CRO Analysis" },
-  { id: "trust", label: "Trust & Credibility Analysis", progress: 99, activity: "Trust & Credibility Analysis" },
-  { id: "issues", label: "Aggregating Issues", progress: 99, activity: "Aggregating Issues" },
-  { id: "recommendations", label: "Generating Recommendations", progress: 99, activity: "Generating Recommendations" },
-  { id: "score", label: "Calculating Health Score", progress: 99, activity: "Calculating Health Score" },
-  { id: "ready", label: "Analysis complete", progress: 100, activity: "Analysis complete" },
-];
+const STEP_DEFS = [
+  { id: "validate", label: "Validating website", activity: "Validating website" },
+  { id: "connect", label: "Connecting", activity: "Connecting" },
+  { id: "fetch", label: "Fetching homepage", activity: "Fetching homepage" },
+  { id: "parse", label: "Parsing website", activity: "Parsing website" },
+  { id: "pages", label: "Discovering pages", activity: "Discovering pages" },
+  { id: "seo", label: "SEO analysis", activity: "SEO analysis" },
+  { id: "aeo", label: "AEO analysis", activity: "AEO analysis" },
+  { id: "render", label: "Rendering website", activity: "Rendering website" },
+  { id: "uiux", label: "UI/UX analysis", activity: "UI/UX analysis" },
+  { id: "shots", label: "Capturing screenshots", activity: "Capturing screenshots" },
+  { id: "a11y", label: "Accessibility analysis", activity: "Accessibility analysis" },
+  { id: "perf", label: "Performance analysis", activity: "Performance analysis" },
+  { id: "content", label: "Content analysis", activity: "Content analysis" },
+  { id: "schema", label: "Structured Data Analysis", activity: "Structured Data Analysis" },
+  { id: "mobile", label: "Mobile Analysis", activity: "Mobile Analysis" },
+  { id: "cro", label: "CRO Analysis", activity: "CRO Analysis" },
+  { id: "trust", label: "Trust & Credibility Analysis", activity: "Trust & Credibility Analysis" },
+  { id: "issues", label: "Aggregating Issues", activity: "Aggregating Issues" },
+  { id: "recommendations", label: "Generating Recommendations", activity: "Generating Recommendations" },
+  { id: "score", label: "Calculating Health Score", activity: "Calculating Health Score" },
+  { id: "ready", label: "Analysis complete", activity: "Analysis complete" },
+] as const;
+
+export const SCAN_STEPS: ScanStepDefinition[] = STEP_DEFS.map((step, index) => ({
+  id: step.id,
+  label: step.label,
+  activity: step.activity,
+  progress: Math.round(((index + 1) / STEP_DEFS.length) * 100),
+}));
 
 export function statusesForScan(options: {
   progress: number;

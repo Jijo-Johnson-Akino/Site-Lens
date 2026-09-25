@@ -1,8 +1,9 @@
 "use client";
 
-import { createContext, useContext, useMemo, useSyncExternalStore, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useSyncExternalStore, type ReactNode } from "react";
 
 import {
+  applyTheme,
   nextTheme,
   persistTheme,
   readStoredTheme,
@@ -40,6 +41,10 @@ function getServerResolvedSnapshot(): ResolvedTheme {
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const theme = useSyncExternalStore(subscribeTheme, getThemeSnapshot, getServerThemeSnapshot);
   const resolved = useSyncExternalStore(subscribeTheme, getResolvedSnapshot, getServerResolvedSnapshot);
+
+  useEffect(() => {
+    applyTheme(theme);
+  }, [theme]);
 
   const value = useMemo<ThemeContextValue>(
     () => ({

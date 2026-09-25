@@ -4,6 +4,7 @@ import logging
 
 from fastapi import APIRouter, BackgroundTasks, Body, Query
 from fastapi.responses import JSONResponse, Response
+from urllib.parse import quote
 
 from backend.analyzers.mobile.screenshots import allowed_screenshot_key
 from backend.analyzers.uiux.config import all_known_viewports
@@ -27,6 +28,7 @@ from backend.recommendations.query import query_recommendations
 from backend.recommendations.serialize import recommendation_to_detail, recommendation_to_list_item
 from backend.report.engine import assemble_report
 from backend.report.config import REPORT_UNAVAILABLE
+from backend.report.pdf import render_report_pdf, report_pdf_filename
 from backend.scoring.repository import health_from_result
 from backend.scoring.serializers import methodology_response, score_response
 from backend.schemas.scan import ScanCreateRequest, ScanCreateResponse, ScanStatusResponse
@@ -1252,16 +1254,15 @@ async def get_scan_score_methodology(scan_id: str):
     return methodology_response(record.id, health)
 
 
-@router.get("/scans/{scan_id}/report")
-async def get_scan_report(scan_id: str):
+def _report_payload(scan_id: str):
     record = service.get(scan_id)
     if record is None:
-        return JSONResponse(
+        return None, JSONResponse(
             status_code=404,
             content={"error": {"code": "SCAN_NOT_FOUND", "message": "Scan not found."}},
         )
     if record.status == "failed":
-        return JSONResponse(
+        return None, JSONResponse(
             status_code=409,
             content={
                 "error": {
@@ -1271,7 +1272,7 @@ async def get_scan_report(scan_id: str):
             },
         )
     if record.status != "completed":
-        return JSONResponse(
+        return None, JSONResponse(
             status_code=409,
             content={"error": {"code": "SCAN_NOT_READY", "message": "The report is not available until the scan completes."}},
         )
@@ -1291,13 +1292,45 @@ async def get_scan_report(scan_id: str):
     except ScanError:
         comparison = None
     try:
-        return assemble_report(record, competitor_comparison=comparison)
+        return assemble_report(record, competitor_comparison=comparison), None
     except Exception:
         logger.exception("report_assembly_failed scan_id=%s", scan_id)
+        return None, JSONResponse(
+            status_code=500,
+            content={"error": {"code": "REPORT_UNAVAILABLE", "message": REPORT_UNAVAILABLE}},
+        )
+
+
+@router.get("/scans/{scan_id}/report.pdf")
+async def get_scan_report_pdf(scan_id: str):
+    payload, error = _report_payload(scan_id)
+    if error is not None:
+        return error
+    try:
+        pdf_bytes = render_report_pdf(payload)
+    except Exception:
+        logger.exception("report_pdf_failed scan_id=%s", scan_id)
         return JSONResponse(
             status_code=500,
             content={"error": {"code": "REPORT_UNAVAILABLE", "message": REPORT_UNAVAILABLE}},
         )
+    filename = report_pdf_filename(payload)
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f'attachment; filename="{filename}"; filename*=UTF-8\'\'{quote(filename)}',
+            "Cache-Control": "no-store",
+        },
+    )
+
+
+@router.get("/scans/{scan_id}/report")
+async def get_scan_report(scan_id: str):
+    payload, error = _report_payload(scan_id)
+    if error is not None:
+        return error
+    return payload
 
 
 @router.get("/scans/{scan_id}/uiux/screenshots/{viewport}")
