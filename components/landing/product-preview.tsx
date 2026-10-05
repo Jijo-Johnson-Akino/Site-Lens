@@ -72,14 +72,22 @@ export function ProductPreview() {
           </div>
 
           <div className="grid min-w-0 md:grid-cols-[8.25rem_minmax(0,1fr)]">
-            <aside className="hidden bg-[#0B1220] p-3 text-white md:block" aria-hidden="true">
+            <aside className="hidden border-r border-border bg-card p-3 text-foreground md:block" aria-hidden="true">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/brand/sitelens-logo.png"
+                alt=""
+                width={699}
+                height={189}
+                className="mb-3 h-5 w-auto max-w-full object-contain object-left dark:hidden"
+              />
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/brand/sitelens-logo-on-dark.png"
                 alt=""
                 width={699}
                 height={189}
-                className="mb-3 h-5 w-auto max-w-full object-contain object-left"
+                className="mb-3 hidden h-5 w-auto max-w-full object-contain object-left dark:block"
               />
               <ul className="space-y-0.5">
                 {NAV.map((item, index) => (
@@ -87,8 +95,8 @@ export function ProductPreview() {
                     key={item}
                     className={
                       index === 0
-                        ? "rounded-lg bg-brand px-2.5 py-1.5 text-[13px] font-medium"
-                        : "rounded-lg px-2.5 py-1.5 text-[13px] text-white/60"
+                        ? "rounded-lg bg-brand/10 px-2.5 py-1.5 text-[13px] font-medium text-brand"
+                        : "rounded-lg px-2.5 py-1.5 text-[13px] text-muted-foreground"
                     }
                   >
                     {item}

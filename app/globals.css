@@ -385,15 +385,25 @@
     radial-gradient(ellipse 40% 30% at 12% 0%, rgb(14 165 233 / 0.06), transparent 55%);
 }
 
-.landing-grid-navy {
+.landing-cta-grid {
   background-image:
-    linear-gradient(to right, rgb(59 130 246 / 0.12) 1px, transparent 1px),
-    linear-gradient(to bottom, rgb(59 130 246 / 0.12) 1px, transparent 1px);
+    linear-gradient(to right, rgb(37 99 235 / 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(37 99 235 / 0.07) 1px, transparent 1px);
   background-size: 56px 56px;
   mask-image: radial-gradient(ellipse 80% 70% at 85% 20%, #000 0%, transparent 72%);
 }
 
-.landing-glow-navy {
+.dark .landing-cta-grid {
+  background-image:
+    linear-gradient(to right, rgb(59 130 246 / 0.12) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(59 130 246 / 0.12) 1px, transparent 1px);
+}
+
+.landing-cta-glow {
+  background-image: radial-gradient(ellipse 50% 60% at 80% 40%, rgb(37 99 235 / 0.1), transparent 62%);
+}
+
+.dark .landing-cta-glow {
   background-image: radial-gradient(ellipse 50% 60% at 80% 40%, rgb(37 99 235 / 0.22), transparent 62%);
 }
 

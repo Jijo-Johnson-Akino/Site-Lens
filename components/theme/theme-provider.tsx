@@ -31,7 +31,7 @@ function getResolvedSnapshot() {
 }
 
 function getServerThemeSnapshot(): ThemePreference {
-  return "system";
+  return "light";
 }
 
 function getServerResolvedSnapshot(): ResolvedTheme {
